@@ -41,9 +41,21 @@ func (apiCfg *apiConfig) handlerGetFeeds(w http.ResponseWriter, r *http.Request)
 
 	feeds, err := apiCfg.DB.GetFeeds(r.Context())
 	if err != nil {
-		respondWithError(w, 400, fmt.Sprintf("Couldn't Get feeds %s:", err))
+		respondWithError(w, 400, fmt.Sprintf("couldn't get feeds %s:", err))
 		return
 	}
 
 	respondWithJSON(w, http.StatusOK, databaseFeedsToFeed(feeds))
+}
+
+func (apiCfg *apiConfig) handlerGetPostsForUsers(w http.ResponseWriter, r *http.Request, user database.User) {
+	posts, err := apiCfg.DB.GetPostsForUser(r.Context(), database.GetPostsForUserParams{
+		UserID: user.ID,
+		Limit:  10})
+	if err != nil {
+		respondWithError(w, 400, fmt.Sprintf("couldn't get posts %s:", err))
+		return
+	}
+	respondWithJSON(w, http.StatusOK, databasePostsToPosts(posts))
+
 }

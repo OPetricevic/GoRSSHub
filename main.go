@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/OPetricevic/GoRSSHub/internal/database"
 	"github.com/go-chi/chi"
@@ -38,10 +39,11 @@ func main() {
 	if err != nil {
 		log.Fatal("Can't Connect to database", err)
 	}
-
+	db := database.New(conn)
 	apiCfg := apiConfig{
-		DB: database.New(conn),
+		DB: db,
 	}
+	go startScraping(db, 10, time.Minute)
 
 	router := chi.NewRouter()
 
@@ -61,6 +63,8 @@ func main() {
 	v1Router.Get("/users", apiCfg.middlewareAuth(apiCfg.handlerGetUser))
 	v1Router.Get("/feeds", apiCfg.handlerGetFeeds)
 	v1Router.Get("/feed_follows", apiCfg.middlewareAuth(apiCfg.handlerGetFeedFollows))
+	v1Router.Get("/posts", apiCfg.middlewareAuth(apiCfg.handlerGetPostsForUsers))
+
 	// POST
 	v1Router.Post("/feed_follows", apiCfg.middlewareAuth(apiCfg.handlerCreateFeedFollow))
 	v1Router.Post("/users", apiCfg.handleCreateUser)

@@ -7,10 +7,10 @@ RETURNING *;
 -- name: GetFeeds :many
 Select * From feeds;
 
--- name: GetNextFeedToFetch :one
+-- name: GetNextFeedsToFetch :many
 Select * From feeds
 Order by last_fetched_at ASC nulls first
-limit 1;
+limit $1;
 
 -- name: MarkFeedAsFetched :one
 UPDATE feeds
