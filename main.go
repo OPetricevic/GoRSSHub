@@ -11,10 +11,13 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
 	"github.com/joho/godotenv" //Paket - omogućava mi da pozovem Port iz .env
-	"github.qcom/OPetricevic/GoRSSHub/internal/database"
 
 	_ "github.com/lib/pq"
 )
+
+type apiConfig struct {
+	DB *database.Queries
+}
 
 func main() {
 	godotenv.Load(".env")
@@ -34,9 +37,9 @@ func main() {
 	if err != nil {
 		log.Fatal("Can't Connect to database", err)
 	}
-	
+
 	apiCfg := apiConfig{
-		DB: database.New(conn)
+		DB: database.New(conn),
 	}
 
 	router := chi.NewRouter()
@@ -54,6 +57,7 @@ func main() {
 
 	v1Router.Get("/healthz", handlerReadiness)
 	v1Router.Get("/err", handleError)
+	v1Router.Post("/users", apiCfg.handleCreateUser)
 
 	router.Mount("/v1", v1Router)
 
@@ -64,8 +68,5 @@ func main() {
 
 	log.Printf("Server starting on port %v", portString)
 
-	err := server.ListenAndServe()
-	if err != nil {
-		log.Fatal(err)
-	}
+	server.ListenAndServe()
 }

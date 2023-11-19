@@ -8,6 +8,9 @@ require (
 	github.com/joho/godotenv v1.5.1
 )
 
-require github.com/google/uuid v1.4.0
+require (
+	github.com/google/uuid v1.4.0
+	github.com/lib/pq v1.10.9
+)
 
 replace github.com/sqlc-dev/sqlc => github.com/kyleconroy/sqlc v1.23.0
