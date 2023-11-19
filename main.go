@@ -1,14 +1,19 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 
+	"github.com/OPetricevic/GoRSSHub/internal/database"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
 	"github.com/joho/godotenv" //Paket - omogućava mi da pozovem Port iz .env
+	"github.qcom/OPetricevic/GoRSSHub/internal/database"
+
+	_ "github.com/lib/pq"
 )
 
 func main() {
@@ -20,6 +25,20 @@ func main() {
 	} else {
 		fmt.Println("Port:", portString)
 	}
+
+	dbURL := os.Getenv("DB_URL")
+	if portString == "" {
+		log.Fatal("DB_URL is not found in the enviorment")
+	}
+	conn, err := sql.Open("postgres", dbURL)
+	if err != nil {
+		log.Fatal("Can't Connect to database", err)
+	}
+	
+	apiCfg := apiConfig{
+		DB: database.New(conn)
+	}
+
 	router := chi.NewRouter()
 
 	router.Use(cors.Handler(cors.Options{
