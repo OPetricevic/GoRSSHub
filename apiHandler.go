@@ -25,7 +25,7 @@ func (apiCfg *apiConfig) handleCreateUser(w http.ResponseWriter, r *http.Request
 	params := parameters{}
 	err := decoder.Decode(&params)
 	if err != nil {
-		respondWithError(w, 400, fmt.Sprintf("Error parsing JSON:", err))
+		respondWithError(w, 400, fmt.Sprintf("Error parsing JSON %s:", err))
 		return
 	}
 
@@ -36,7 +36,7 @@ func (apiCfg *apiConfig) handleCreateUser(w http.ResponseWriter, r *http.Request
 		Name:      params.Name,
 	})
 	if err != nil {
-		respondWithError(w, 400, fmt.Sprintf("Couldn't Create user %v:", err))
+		respondWithError(w, 400, fmt.Sprintf("Couldn't Create user %s:", err))
 		return
 	}
 
