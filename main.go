@@ -61,6 +61,7 @@ func main() {
 
 	v1Router.Get("/feeds", apiCfg.handlerGetFeeds)
 	// POST
+	v1Router.Post("/feed_follows", apiCfg.middlewareAuth(apiCfg.handlerCreateFeedFollow))
 	v1Router.Post("/users", apiCfg.handleCreateUser)
 	v1Router.Post("/feeds", apiCfg.middlewareAuth(apiCfg.handlerCreateFeed))
 
