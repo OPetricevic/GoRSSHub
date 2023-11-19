@@ -20,6 +20,7 @@ type apiConfig struct {
 }
 
 func main() {
+
 	godotenv.Load(".env")
 
 	portString := os.Getenv("PORT")
@@ -58,12 +59,14 @@ func main() {
 	v1Router.Get("/healthz", handlerReadiness)
 	v1Router.Get("/err", handleError)
 	v1Router.Get("/users", apiCfg.middlewareAuth(apiCfg.handlerGetUser))
-
 	v1Router.Get("/feeds", apiCfg.handlerGetFeeds)
+	v1Router.Get("/feed_follows", apiCfg.middlewareAuth(apiCfg.handlerGetFeedFollows))
 	// POST
 	v1Router.Post("/feed_follows", apiCfg.middlewareAuth(apiCfg.handlerCreateFeedFollow))
 	v1Router.Post("/users", apiCfg.handleCreateUser)
 	v1Router.Post("/feeds", apiCfg.middlewareAuth(apiCfg.handlerCreateFeed))
+	//DELETE
+	v1Router.Delete("/feed_follows/{feedFollowID}", apiCfg.middlewareAuth(apiCfg.handlerDeleteFeedFollow))
 
 	router.Mount("/v1", v1Router)
 
